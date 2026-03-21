@@ -8,6 +8,6 @@ type Config struct {
 func MustLoad() Config {
 	return Config{
 		HTTPAddr:    ":8080",
-		DataBAseURL: "postgres://wgtoooa:12354@127.0.0.1:5432/attendance?sslmode=disable",
+		DataBAseURL: "postgres://wgtoooa:12354@localhost:5432/ettendance?sslmode=disable",
 	}
 }
