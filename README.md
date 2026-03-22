@@ -1,62 +1,92 @@
-# Attendance Tracking System
+# Course Project Roadmap
 
-> Smart student attendance system using RFID / mobile devices with real-time processing and reporting
+_Last updated: 2026-03-22 11:19_
 
----
-
-## About
-
-This project is a **student attendance tracking system** designed to automate the process of recording and analyzing attendance using unique identifiers (RFID cards, mobile devices, etc.).
-
-The system focuses on:
-- fast data collection
-- reliable storage
-- flexible reporting
-- scalability and integration with external devices
+## Current State
+We already have:
+- Database migrations
+- Domain models
+- DTO (transport layer)
+- Project structure
 
 ---
 
-## How It Works
-
-The system is divided into two main parts:
-
-### 1. Data Collection (Client Side)
-- students scan their ID (RFID / device)
-- system records:
-    - unique identifier
-    - timestamp
-    - location (classroom)
-- data is stored locally and sent to the server
-
----
-
-### 2. Backend Processing (Server Side)
-- receives attendance data
-- stores it in database
-- processes and validates records
-- generates reports
-
-> Client only collects data — all logic is handled on the server.
+## Next Steps
+### 0. env file
+### 1. Service Layer
+Core business logic:
+- Accept batch request
+- Create attendance session
+- Iterate over scans
+- Find student by card_uid
+- Save attendance_event
+- Collect not_found_cards
 
 ---
 
-## Project Structure
+### 2. HTTP Handler
+Endpoint:
+POST /api/v1/attendance/sessions
 
-```bash
-attendance-system/
-│
-├── cmd/                    # Application entry points
-│   └── server/
-│
-├── internal/
-│   ├── domain/             # Core entities (Student, Attendance)
-│   ├── service/            # Business logic
-│   ├── storage/            # Database layer
-│   │   └── postgres/
-│   └── transport/          # HTTP handlers / API
-│
-├── pkg/                    # Shared packages
-├── configs/                # Config files
-├── migrations/             # DB migrations
-├── docs/                   # Documentation
-└── README.md
+Responsibilities:
+- Parse JSON (DTO)
+- Call service
+- Return response
+
+---
+
+### 3. Wiring (main/router)
+- Initialize DB
+- Initialize repositories
+- Initialize services
+- Initialize handlers
+- Register routes
+
+---
+
+### 4. Manual Testing
+Use:
+- curl
+- Postman
+
+Test cases:
+- All cards valid
+- Some cards not found
+- Empty scans
+- Invalid JSON
+
+---
+
+### 5. Seed Data
+Add test students with:
+- card_uid
+- names, course, group
+
+---
+
+### 6. Error Handling
+- 400 → bad request / invalid JSON
+- 500 → DB errors
+- validation (empty fields)
+
+---
+
+### 7. Transactions
+Wrap session + events creation in transaction
+
+---
+
+### 8. First Read Endpoint
+Example:
+- Get events by session
+- Get attendance by student
+- Get attendance by room/date
+
+---
+
+### 9. Future Improvements
+- Authentication
+- Roles
+- Reports
+- Student import
+- Multi-device support
