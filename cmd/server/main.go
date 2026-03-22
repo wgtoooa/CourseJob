@@ -16,13 +16,13 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	dbPool, err := postgres.NewPool(ctx, cfg.DataBAseURL)
+	DB, err := postgres.NewPool(ctx, cfg.DataBAseURL)
 	if err != nil {
 		log.Fatalf("failed connected to database %v", err)
 	}
-	defer dbPool.Close()
+	defer DB.Close()
 
-	handler := &http.Handler{DB: dbPool}
+	handler := &http.Handler{DB.Pool}
 
 	router := http.NewRouter(handler)
 

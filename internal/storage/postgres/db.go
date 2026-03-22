@@ -6,7 +6,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewPool(ctx context.Context, dataNaseURL string) (*pgxpool.Pool, error) {
+type DB struct {
+	Pool *pgxpool.Pool
+}
+
+func NewPool(ctx context.Context, dataNaseURL string) (*DB, error) {
 	pool, err := pgxpool.New(ctx, dataNaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("create pgx pool err:%s", err)
@@ -15,5 +19,9 @@ func NewPool(ctx context.Context, dataNaseURL string) (*pgxpool.Pool, error) {
 	if err := pool.Ping(ctx); err != nil {
 		return nil, fmt.Errorf("ping daatbase:%s", err)
 	}
-	return pool, nil
+	return &DB{Pool: pool}, nil
+}
+
+func (db *DB) Close() {
+	db.Pool.Close()
 }
