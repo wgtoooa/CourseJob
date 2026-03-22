@@ -13,10 +13,10 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-
+	log.Println("config loaded")
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
-	DB, err := postgres.NewPool(ctx, cfg.DataBAseURL)
+	DB, err := postgres.NewPool(ctx, cfg.DatabaseURL)
 	if err != nil {
 		log.Fatalf("failed connected to database %v", err)
 	}
@@ -30,7 +30,7 @@ func main() {
 		Handler: router,
 		Addr:    cfg.HTTPAddr,
 	}
-	log.Printf("server started on: %s", cfg.HTTPAddr)
+	log.Printf("server started on%s", cfg.HTTPAddr)
 
 	if err := server.ListenAndServe(); err != nil && err != nethttp.ErrServerClosed {
 		log.Fatalf("http server start failed: %v", err)
