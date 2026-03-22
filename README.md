@@ -12,7 +12,7 @@ We already have:
 ---
 
 ## Next Steps
-### 0. env file
+### ~~0. env file~~ +
 ### 1. Service Layer
 Core business logic:
 - Accept batch request
