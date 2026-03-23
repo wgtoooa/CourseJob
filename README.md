@@ -15,12 +15,12 @@ We already have:
 ### ~~0. env file~~ +
 ### 1. Service Layer
 Core business logic:
-- Accept batch request
-- Create attendance session
-- Iterate over scans
-- Find student by card_uid
-- Save attendance_event
-- Collect not_found_cards
+- ~~Accept batch request~~
+- ~~Create attendance session~~
+- ~~Iterate over scans~~
+- ~~Find student by card_uid~~
+- ~~Save attendance_event~~
+- ~~Collect not_found_cards~~
 
 ---
 
@@ -29,18 +29,18 @@ Endpoint:
 POST /api/v1/attendance/sessions
 
 Responsibilities:
-- Parse JSON (DTO)
-- Call service
-- Return response
+- ~~Parse JSON (DTO)~~
+- ~~Call service~~
+- ~~Return response~~
 
 ---
 
 ### 3. Wiring (main/router)
-- Initialize DB
-- Initialize repositories
-- Initialize services
-- Initialize handlers
-- Register routes
+- ~~Initialize DB~~
+- ~~Initialize repositories~~
+- ~~Initialize services~~
+- ~~Initialize handlers~~
+- ~~Register routes~~
 
 ---
 
