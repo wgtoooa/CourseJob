@@ -15,7 +15,7 @@ func NewAttendanceEventRepository(db *DB) *AttendanceEventRepository {
 
 func (repo *AttendanceEventRepository) Create(ctx context.Context, event *domain.AttendanceEvent) error {
 	const query = `
-		INSERT INTO attendance_events (session_id, student_id, card_uid, scanned_at)
+		INSERT INTO attendance_event (session_id, student_id, card_uid, scanned_at)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at`
 	err := repo.db.Pool.QueryRow(

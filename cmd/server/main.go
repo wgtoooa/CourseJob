@@ -2,9 +2,9 @@ package main
 
 import (
 	"CourseJob/internal/config"
-	"CourseJob/internal/http"
 	"CourseJob/internal/service"
 	"CourseJob/internal/storage/postgres"
+	http2 "CourseJob/internal/transport/http"
 	"context"
 	"log"
 	nethttp "net/http"
@@ -32,8 +32,8 @@ func main() {
 
 	attendanceService := service.NewAttendanceService(studentRepo, sessionRepo, eventRepo)
 
-	handler := http.NewHandler(db.Pool, attendanceService)
-	router := http.NewRouter(handler)
+	handler := http2.NewHandler(db.Pool, attendanceService)
+	router := http2.NewRouter(handler)
 
 	server := &nethttp.Server{
 		Addr:    cfg.HTTPAddr,

@@ -50,24 +50,24 @@ Use:
 - Postman
 
 Test cases:
-- All cards valid
-- Some cards not found
-- Empty scans
-- Invalid JSON
+- ~~All cards valid~~
+- ~~Some cards not found~~
+- ~~Empty scans~~
+- ~~Invalid JSON~~
 
 ---
 
 ### 5. Seed Data
 Add test students with:
-- card_uid
-- names, course, group
+- ~~card_uid~~
+- ~~names, course, group~~
 
 ---
 
 ### 6. Error Handling
-- 400 → bad request / invalid JSON
+- ~~400 → bad request / invalid JSON~~
 - 500 → DB errors
-- validation (empty fields)
+- ~~validation (empty fields)~~
 
 ---
 
