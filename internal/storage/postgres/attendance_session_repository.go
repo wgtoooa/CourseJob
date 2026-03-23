@@ -15,14 +15,14 @@ func NewAttendanceSessionRepository(db *DB) *AttendanceSessionRepository {
 
 func (repo *AttendanceSessionRepository) Create(ctx context.Context, session *domain.AttendanceSession) error {
 	const query = `
-					insert into attendance_session(room,source,created_at,finished_at) values
+					insert into attendance_session(room,source,started_at,finished_at) values
 					($1, $2, $3,$4)
-					returning id created_at;`
+					returning id,created_at;`
 	err := repo.db.Pool.QueryRow(ctx,
 		query,
 		session.Room,
 		session.Source,
-		session.CreatedAt,
+		session.StartedAt,
 		session.FinishedAt).Scan(&session.ID, &session.CreatedAt)
 	if err != nil {
 		return err

@@ -1,7 +1,7 @@
 package dto
 
 type AttendanceResponse struct {
-	SessionID    int      `json:"session_id"`
+	SessionID    int64    `json:"session_id"`
 	SavedEvents  int      `json:"saved_events"`
 	NotFoundCard []string `json:"not_found_card"`
 }

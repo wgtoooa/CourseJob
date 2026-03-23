@@ -15,13 +15,13 @@ func NewStudentRepository(db *DB) *StudentRepository {
 	return &StudentRepository{db: db}
 }
 
-func (repo *StudentRepository) GetByCardUID(ctx context.Context, UID string) (*domain.Students, error) {
+func (repo *StudentRepository) GetByCardUID(ctx context.Context, UID string) (*domain.Student, error) {
 	const query = `
 SELECT id,full_name,course,group_name,card_uid,created_at
-from students
+from student
 where card_uid = $1`
 
-	var students domain.Students
+	var students domain.Student
 	err := repo.db.Pool.QueryRow(ctx, query, UID).Scan(
 		&students.ID,
 		&students.FullName,

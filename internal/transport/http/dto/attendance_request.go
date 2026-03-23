@@ -6,6 +6,7 @@ type AttendanceScanRequest struct {
 	CardUID   string    `json:"card_uid"`
 	ScannedAt time.Time `json:"scanned_at"`
 }
+
 type AttendanceSessionRequest struct {
 	Room       string                  `json:"room"`
 	Source     string                  `json:"source"`

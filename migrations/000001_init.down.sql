@@ -1,3 +1,3 @@
-DROP TABLE attendance_events;
-DROP TABLE attendance_sessions;
-DROP TABLE students;
+DROP TABLE attendance_event;
+DROP TABLE attendance_session;
+DROP TABLE student;
