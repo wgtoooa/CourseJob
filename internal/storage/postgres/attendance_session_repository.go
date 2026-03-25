@@ -6,10 +6,10 @@ import (
 )
 
 type AttendanceSessionRepository struct {
-	db *DB
+	db DBTX
 }
 
-func NewAttendanceSessionRepository(db *DB) *AttendanceSessionRepository {
+func NewAttendanceSessionRepository(db DBTX) *AttendanceSessionRepository {
 	return &AttendanceSessionRepository{db: db}
 }
 
@@ -18,7 +18,7 @@ func (repo *AttendanceSessionRepository) Create(ctx context.Context, session *do
 					insert into attendance_session(room,source,started_at,finished_at) values
 					($1, $2, $3,$4)
 					returning id,created_at;`
-	err := repo.db.Pool.QueryRow(ctx,
+	err := repo.db.QueryRow(ctx,
 		query,
 		session.Room,
 		session.Source,

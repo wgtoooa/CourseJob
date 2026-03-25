@@ -1,6 +1,7 @@
 package service
 
 import (
+	"CourseJob/internal/storage/postgres"
 	"context"
 	"time"
 
@@ -20,20 +21,23 @@ type AttendanceEventCreator interface {
 }
 
 type AttendanceService struct {
-	studentRepo StudentGetter
-	sessionRepo AttendanceSessionCreator
-	eventRepo   AttendanceEventCreator
+	transactor postgres.Transactor
+	event      AttendanceEventCreator
+	session    AttendanceSessionCreator
+	student    StudentGetter
 }
 
 func NewAttendanceService(
-	studentRepo StudentGetter,
-	sessionRepo AttendanceSessionCreator,
-	eventRepo AttendanceEventCreator,
+	transactor postgres.Transactor,
+	event AttendanceEventCreator,
+	studentGetter StudentGetter,
+	sessionCreator AttendanceSessionCreator,
 ) *AttendanceService {
 	return &AttendanceService{
-		studentRepo: studentRepo,
-		sessionRepo: sessionRepo,
-		eventRepo:   eventRepo,
+		transactor: transactor,
+		event:      event,
+		student:    studentGetter,
+		session:    sessionCreator,
 	}
 }
 
@@ -60,46 +64,54 @@ func (s *AttendanceService) ProcessAttendance(
 	ctx context.Context,
 	input ProcessAttendanceInput,
 ) (*ProcessAttendanceResult, error) {
-	session := &domain.AttendanceSession{
-		Room:       input.Room,
-		Source:     input.Source,
-		StartedAt:  input.StartedAt,
-		FinishedAt: input.FinishedAt,
-	}
-	if err := s.sessionRepo.Create(ctx, session); err != nil {
+
+	var result *ProcessAttendanceResult
+	err := s.transactor.WithinTransaction(ctx, func(repo postgres.Repositories) error {
+		session := &domain.AttendanceSession{
+			Room:       input.Room,
+			Source:     input.Source,
+			StartedAt:  input.StartedAt,
+			FinishedAt: input.FinishedAt,
+		}
+		if err := repo.Sessions().Create(ctx, session); err != nil {
+			return err
+		}
+
+		result = &ProcessAttendanceResult{
+			SessionID:     session.ID,
+			SavedEvents:   0,
+			NotFoundCards: []string{},
+		}
+
+		for _, scan := range input.Scans {
+			student, err := repo.Students().GetByCardUID(ctx, scan.CardUID)
+			if err != nil {
+				return err
+			}
+
+			if student == nil {
+				result.NotFoundCards = append(result.NotFoundCards, scan.CardUID)
+				continue
+			}
+
+			event := &domain.AttendanceEvent{
+				SessionID: session.ID,
+				StudentID: student.ID,
+				CardUID:   scan.CardUID,
+				ScannedAt: scan.ScannedAt,
+			}
+
+			if err := repo.Events().Create(ctx, event); err != nil {
+				return err
+			}
+
+			result.SavedEvents++
+		}
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
-
-	result := &ProcessAttendanceResult{
-		SessionID:     session.ID,
-		SavedEvents:   0,
-		NotFoundCards: []string{},
-	}
-
-	for _, scan := range input.Scans {
-		student, err := s.studentRepo.GetByCardUID(ctx, scan.CardUID)
-		if err != nil {
-			return nil, err
-		}
-
-		if student == nil {
-			result.NotFoundCards = append(result.NotFoundCards, scan.CardUID)
-			continue
-		}
-
-		event := &domain.AttendanceEvent{
-			SessionID: session.ID,
-			StudentID: student.ID,
-			CardUID:   scan.CardUID,
-			ScannedAt: scan.ScannedAt,
-		}
-
-		if err := s.eventRepo.Create(ctx, event); err != nil {
-			return nil, err
-		}
-
-		result.SavedEvents++
-	}
-
 	return result, nil
+
 }

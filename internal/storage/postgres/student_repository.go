@@ -8,10 +8,10 @@ import (
 )
 
 type StudentRepository struct {
-	db *DB
+	db DBTX
 }
 
-func NewStudentRepository(db *DB) *StudentRepository {
+func NewStudentRepository(db DBTX) *StudentRepository {
 	return &StudentRepository{db: db}
 }
 
@@ -22,7 +22,7 @@ from student
 where card_uid = $1`
 
 	var students domain.Student
-	err := repo.db.Pool.QueryRow(ctx, query, UID).Scan(
+	err := repo.db.QueryRow(ctx, query, UID).Scan(
 		&students.ID,
 		&students.FullName,
 		&students.Course,
