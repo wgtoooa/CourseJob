@@ -33,13 +33,13 @@ func NewTxManager(pool *pgxpool.Pool) *TxManager {
 	return &TxManager{pool: pool}
 }
 
-type UnitOfWork interface {
+type Repository interface {
 	Students() StudentRepo
 	Sessions() SessionRepo
 	Events() EventRepo
 }
 
-func NewRepositories(db DBTX) UnitOfWork {
+func NewRepositories(db DBTX) Repository {
 	return &repositories{
 		studentRepo: NewStudentRepository(db),
 		sessionRepo: NewAttendanceSessionRepository(db),

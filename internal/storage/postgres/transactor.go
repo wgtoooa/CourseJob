@@ -6,10 +6,10 @@ import (
 )
 
 type Transactor interface {
-	WithinTransaction(ctx context.Context, fn func(repo UnitOfWork) error) error
+	WithinTransaction(ctx context.Context, fn func(repo Repository) error) error
 }
 
-func (txm *TxManager) WithinTransaction(ctx context.Context, fn func(repo UnitOfWork) error) (err error) {
+func (txm *TxManager) WithinTransaction(ctx context.Context, fn func(repo Repository) error) (err error) {
 	tx, err := txm.pool.Begin(ctx)
 	if err != nil {
 		return err
