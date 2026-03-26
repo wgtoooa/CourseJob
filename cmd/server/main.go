@@ -9,6 +9,7 @@ import (
 	"log"
 	nethttp "net/http"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 	"time"
 )
@@ -28,8 +29,10 @@ func main() {
 
 	tx := postgres.NewTxManager(db.Pool)
 	attendanceService := service.NewAttendanceService(tx)
+	ready := &atomic.Bool{}
+	ready.Store(true)
 
-	handler := http2.NewHandler(db.Pool, attendanceService)
+	handler := http2.NewHandler(db.Pool, attendanceService, ready)
 	router := http2.NewRouter(handler)
 
 	server := &nethttp.Server{
@@ -46,6 +49,7 @@ func main() {
 
 	<-ctx.Done()
 	log.Println("shutdown signal received")
+	ready.Store(false)
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
