@@ -11,6 +11,6 @@ type AttendanceSessionRequest struct {
 	Room       string                  `json:"room"`
 	Source     string                  `json:"source"`
 	StartedAt  time.Time               `json:"started_at" validate:"required"`
-	FinishedAt time.Time               `json:"finished_at"`
+	FinishedAt time.Time               `json:"finished_at" validate:"required"`
 	Scans      []AttendanceScanRequest `json:"scans" validate:"required"`
 }

@@ -7,6 +7,6 @@ type AttendanceSession struct {
 	Room       string
 	Source     string
 	StartedAt  time.Time
-	FinishedAt *time.Time
+	FinishedAt time.Time
 	CreatedAt  time.Time
 }

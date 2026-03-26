@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"CourseJob/internal/domain"
 	"context"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -12,6 +13,17 @@ type DBTX interface {
 	Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error)
 	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
 }
+type StudentRepo interface {
+	GetByCardUID(ctx context.Context, cardUID string) (*domain.Student, error)
+}
+
+type SessionRepo interface {
+	Create(ctx context.Context, session *domain.AttendanceSession) error
+}
+
+type EventRepo interface {
+	Create(ctx context.Context, event *domain.AttendanceEvent) error
+}
 
 type TxManager struct {
 	pool *pgxpool.Pool
@@ -21,13 +33,13 @@ func NewTxManager(pool *pgxpool.Pool) *TxManager {
 	return &TxManager{pool: pool}
 }
 
-type Repositories interface {
-	Students() *StudentRepository
-	Sessions() *AttendanceSessionRepository
-	Events() *AttendanceEventRepository
+type UnitOfWork interface {
+	Students() StudentRepo
+	Sessions() SessionRepo
+	Events() EventRepo
 }
 
-func NewRepository(db DBTX) Repositories {
+func NewRepositories(db DBTX) UnitOfWork {
 	return &repositories{
 		studentRepo: NewStudentRepository(db),
 		sessionRepo: NewAttendanceSessionRepository(db),
@@ -36,18 +48,18 @@ func NewRepository(db DBTX) Repositories {
 }
 
 type repositories struct {
-	studentRepo *StudentRepository
-	sessionRepo *AttendanceSessionRepository
-	eventRepo   *AttendanceEventRepository
+	studentRepo StudentRepo
+	sessionRepo SessionRepo
+	eventRepo   EventRepo
 }
 
-func (re *repositories) Students() *StudentRepository {
+func (re *repositories) Students() StudentRepo {
 	return re.studentRepo
 }
 
-func (re *repositories) Sessions() *AttendanceSessionRepository {
+func (re *repositories) Sessions() SessionRepo {
 	return re.sessionRepo
 }
-func (re *repositories) Events() *AttendanceEventRepository {
+func (re *repositories) Events() EventRepo {
 	return re.eventRepo
 }

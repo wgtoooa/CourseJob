@@ -10,6 +10,6 @@ func NewRouter(h *Handler) nethttp.Handler {
 
 	r.Get("/ping", h.Ping)
 	r.Get("/db/ping", h.PingDB)
-	r.Post("/attendance", h.CreateAttendanceSession)
+	r.Post("/api/v1/attendance/sessions", h.CreateAttendanceSession)
 	return r
 }

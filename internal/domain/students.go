@@ -8,5 +8,5 @@ type Student struct {
 	Course    int
 	GroupName string
 	CardUID   string
-	CreateAt  time.Time
+	CreatedAt time.Time
 }

@@ -8,44 +8,23 @@ import (
 	"CourseJob/internal/domain"
 )
 
-type StudentGetter interface {
-	GetByCardUID(ctx context.Context, cardUID string) (*domain.Student, error)
-}
-
-type AttendanceSessionCreator interface {
-	Create(ctx context.Context, session *domain.AttendanceSession) error
-}
-
-type AttendanceEventCreator interface {
-	Create(ctx context.Context, event *domain.AttendanceEvent) error
-}
-
 type AttendanceService struct {
 	transactor postgres.Transactor
-	event      AttendanceEventCreator
-	session    AttendanceSessionCreator
-	student    StudentGetter
 }
 
 func NewAttendanceService(
 	transactor postgres.Transactor,
-	event AttendanceEventCreator,
-	studentGetter StudentGetter,
-	sessionCreator AttendanceSessionCreator,
 ) *AttendanceService {
 	return &AttendanceService{
 		transactor: transactor,
-		event:      event,
-		student:    studentGetter,
-		session:    sessionCreator,
 	}
 }
 
-type ProcessAttendanceInput struct {
+type AttendanceInput struct {
 	Room       string
 	Source     string
 	StartedAt  time.Time
-	FinishedAt *time.Time
+	FinishedAt time.Time
 	Scans      []ProcessAttendanceScanInput
 }
 
@@ -62,11 +41,11 @@ type ProcessAttendanceResult struct {
 
 func (s *AttendanceService) ProcessAttendance(
 	ctx context.Context,
-	input ProcessAttendanceInput,
+	input AttendanceInput,
 ) (*ProcessAttendanceResult, error) {
 
 	var result *ProcessAttendanceResult
-	err := s.transactor.WithinTransaction(ctx, func(repo postgres.Repositories) error {
+	err := s.transactor.WithinTransaction(ctx, func(repo postgres.UnitOfWork) error {
 		session := &domain.AttendanceSession{
 			Room:       input.Room,
 			Source:     input.Source,

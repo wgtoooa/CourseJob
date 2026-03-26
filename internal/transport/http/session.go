@@ -9,7 +9,7 @@ import (
 
 func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != "POST" {
-		writejSON(w, 500, response{
+		writeJSON(w, nethttp.StatusMethodNotAllowed, jsonResponse{
 			"status": "error",
 			"error":  "Method not allowed",
 		})
@@ -18,25 +18,24 @@ func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.R
 	var req dto.AttendanceSessionRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writejSON(w, 500, response{
+		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",
 			"error":  "invalid request body",
 		})
 		return
 	}
 	if err := ValidatorSession(&req); err != nil {
-		writejSON(w, 500, response{
+		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",
 			"error":  err.Error(),
 		})
 		return
 	}
-
-	input := service.ProcessAttendanceInput{
+	input := service.AttendanceInput{
 		Room:       req.Room,
 		Source:     req.Source,
 		StartedAt:  req.StartedAt,
-		FinishedAt: &req.FinishedAt,
+		FinishedAt: req.FinishedAt,
 		Scans:      make([]service.ProcessAttendanceScanInput, 0, len(req.Scans)),
 	}
 
@@ -49,27 +48,21 @@ func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.R
 
 	result, err := h.attendanceService.ProcessAttendance(r.Context(), input)
 	if err != nil {
-		writejSON(w, 500, response{
+		writeJSON(w, nethttp.StatusInternalServerError, jsonResponse{
 			"status": "error",
 			"error":  err.Error(),
 		})
 		return
 	}
-	resp := dto.AttendanceResponse{
-		SessionID:    result.SessionID,
-		SavedEvents:  result.SavedEvents,
-		NotFoundCard: result.NotFoundCards,
-	}
-	writejSON(w, nethttp.StatusCreated, response{
+	resp := jsonResponse{
 		"status": "created",
-	})
-
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		writejSON(w, 500, response{
-			"status": "error",
-			"error":  "failed to encode response",
-		})
-		return
+		"data": dto.AttendanceResponse{
+			SessionID:     result.SessionID,
+			SavedEvents:   result.SavedEvents,
+			NotFoundCards: result.NotFoundCards,
+		},
 	}
+
+	writeJSON(w, nethttp.StatusCreated, resp)
 
 }

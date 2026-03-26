@@ -10,7 +10,7 @@ import (
 )
 
 type Handler struct {
-	DB                *pgxpool.Pool
+	db                *pgxpool.Pool
 	attendanceService *service.AttendanceService
 }
 
@@ -18,16 +18,16 @@ func NewHandler(db *pgxpool.Pool, attendanceService *service.AttendanceService) 
 	return &Handler{db, attendanceService}
 }
 
-type response map[string]any
+type jsonResponse map[string]any
 
-func writejSON(w nethttp.ResponseWriter, status int, data response) {
+func writeJSON(w nethttp.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(data)
 }
 
 func (h *Handler) Ping(w nethttp.ResponseWriter, r *nethttp.Request) {
-	writejSON(w, nethttp.StatusOK, response{
+	writeJSON(w, nethttp.StatusOK, jsonResponse{
 		"status": "ok",
 	})
 	return
@@ -36,14 +36,14 @@ func (h *Handler) Ping(w nethttp.ResponseWriter, r *nethttp.Request) {
 func (h *Handler) PingDB(w nethttp.ResponseWriter, r *nethttp.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
 	defer cancel()
-	if err := h.DB.Ping(ctx); err != nil {
-		writejSON(w, 500, response{
+	if err := h.db.Ping(ctx); err != nil {
+		writeJSON(w, 500, jsonResponse{
 			"status": "error",
 			"error":  err.Error(),
 		})
 		return
 	}
-	writejSON(w, nethttp.StatusOK, response{
+	writeJSON(w, nethttp.StatusOK, jsonResponse{
 		"status": "ok",
 		"db":     "connected",
 	})

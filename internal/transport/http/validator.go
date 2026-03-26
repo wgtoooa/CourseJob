@@ -25,5 +25,8 @@ func ValidatorSession(session *dto.AttendanceSessionRequest) error {
 	if session.Scans == nil {
 		return errors.New("scans is empty")
 	}
+	if len(session.Scans) == 0 {
+		return errors.New("scans is empty")
+	}
 	return nil
 }

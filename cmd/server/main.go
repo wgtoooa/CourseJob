@@ -25,13 +25,9 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
-	eventRepo := postgres.NewAttendanceEventRepository(db.Pool)
-	studentRepo := postgres.NewStudentRepository(db.Pool)
-	sessionRepo := postgres.NewAttendanceSessionRepository(db.Pool)
 
 	tx := postgres.NewTxManager(db.Pool)
-
-	attendanceService := service.NewAttendanceService(tx, eventRepo, studentRepo, sessionRepo)
+	attendanceService := service.NewAttendanceService(tx)
 
 	handler := http2.NewHandler(db.Pool, attendanceService)
 	router := http2.NewRouter(handler)

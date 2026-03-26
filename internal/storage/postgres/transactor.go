@@ -1,21 +1,37 @@
 package postgres
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 type Transactor interface {
-	WithinTransaction(ctx context.Context, fn func(repo Repositories) error) error
+	WithinTransaction(ctx context.Context, fn func(repo UnitOfWork) error) error
 }
 
-func (txm *TxManager) WithinTransaction(ctx context.Context, fn func(rep Repositories) error) error {
+func (txm *TxManager) WithinTransaction(ctx context.Context, fn func(repo UnitOfWork) error) (err error) {
 	tx, err := txm.pool.Begin(ctx)
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback(ctx)
-	repo := NewRepository(tx)
+
+	defer func() {
+		if err != nil {
+			if rbErr := tx.Rollback(ctx); rbErr != nil {
+				err = fmt.Errorf("rollback failed: %v: %w", rbErr, err)
+			}
+		}
+	}()
+
+	repo := NewRepositories(tx)
 
 	if err = fn(repo); err != nil {
 		return err
 	}
-	return tx.Commit(ctx)
+
+	if err = tx.Commit(ctx); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -28,7 +28,7 @@ where card_uid = $1`
 		&students.Course,
 		&students.GroupName,
 		&students.CardUID,
-		&students.CreateAt,
+		&students.CreatedAt,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
