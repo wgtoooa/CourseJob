@@ -45,7 +45,7 @@ func (s *AttendanceService) ProcessAttendance(
 ) (*ProcessAttendanceResult, error) {
 
 	var result *ProcessAttendanceResult
-	err := s.transactor.WithinTransaction(ctx, func(repo postgres.UnitOfWork) error {
+	err := s.transactor.WithinTransaction(ctx, func(repo postgres.Repository) error {
 		session := &domain.AttendanceSession{
 			Room:       input.Room,
 			Source:     input.Source,
