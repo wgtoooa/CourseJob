@@ -15,15 +15,23 @@ func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.R
 		})
 		return
 	}
-	var req dto.AttendanceSessionRequest
 
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	r.Body = nethttp.MaxBytesReader(w, r.Body, 1<<20) //~ 1 MB
+	defer r.Body.Close()
+
+	var req dto.AttendanceSessionRequest
+	dec := json.NewDecoder(r.Body)
+
+	if err := dec.Decode(&req); err != nil {
 		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",
 			"error":  "invalid request body",
 		})
 		return
 	}
+
+	NormalizeSessionRequest(&req)
+
 	if err := ValidatorSession(&req); err != nil {
 		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",

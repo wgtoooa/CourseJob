@@ -60,9 +60,14 @@ go run ./cmd/server
 ### Health Check
 
 ```http
-GET /ping
-GET /db/ping
+
+GET /health/live
+GET /health/ready
 ```
+
+- `/health/live` checks only that the process is alive.
+- `/health/ready` checks that the service is ready to accept traffic and that PostgreSQL is reachable.
+- during graceful shutdown `/health/ready` returns `503 Service Unavailable`.
 
 ### Create Attendance Session
 
@@ -73,6 +78,7 @@ Content-Type: application/json
 
 Request body:
 
+
 ```json
 {
   "room": "A-101",
@@ -81,16 +87,17 @@ Request body:
   "finished_at": "2026-03-26T10:30:00Z",
   "scans": [
     {
-      "card_uid": "04AABB1122",
+      "card_uid": "04AA",
       "scanned_at": "2026-03-26T09:10:00Z"
     },
     {
-      "card_uid": "04CCDD3344",
+      "card_uid": "04CCDD3",
       "scanned_at": "2026-03-26T09:12:00Z"
     }
   ]
 }
 ```
+but ```card_uid```: A-F,0-9 and len from 4 to 7
 
 Successful response:
 
