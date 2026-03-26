@@ -46,10 +46,10 @@ CREATE INDEX IF NOT EXISTS idx_attendance_session_started_at
     ON attendance_session (started_at);
 
 CREATE INDEX IF NOT EXISTS idx_attendance_event_session_id
-    ON attendance_events(session_id);
+    ON attendance_event(session_id);
 
 CREATE INDEX IF NOT EXISTS idx_attendance_event_student_id
-    ON attendance_events(student_id);
+    ON attendance_event(student_id);
 
 CREATE INDEX IF NOT EXISTS idx_attendance_event_scanned_at
-    ON attendance_events(scanned_at);
+    ON attendance_event(scanned_at);
