@@ -3,6 +3,7 @@ package http
 import (
 	"CourseJob/internal/service"
 	"CourseJob/internal/transport/http/dto"
+	"CourseJob/internal/transport/http/validator"
 	"encoding/json"
 	nethttp "net/http"
 )
@@ -30,9 +31,9 @@ func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.R
 		return
 	}
 
-	NormalizeSessionRequest(&req)
+	validator.NormalizeSessionRequest(&req)
 
-	if err := ValidatorSession(&req); err != nil {
+	if err := validator.ValidatorSession(&req); err != nil {
 		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",
 			"error":  err.Error(),

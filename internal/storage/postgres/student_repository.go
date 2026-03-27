@@ -38,3 +38,19 @@ where card_uid = $1`
 	}
 	return &students, nil
 }
+
+func (repo *StudentRepository) CreateStudent(ctx context.Context, st *domain.Student) error {
+	query := `
+INSERT INTO student (full_name,course,group_name,card_uid,created_at)
+VALUES ($1,$2,$3,$4,$5)`
+	_, err := repo.db.Exec(ctx, query,
+		st.FullName,
+		st.Course,
+		st.GroupName,
+		st.CardUID,
+		st.CreatedAt)
+	if err != nil {
+		return err
+	}
+	return nil
+}

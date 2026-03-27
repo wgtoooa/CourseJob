@@ -36,8 +36,11 @@ func main() {
 	router := http2.NewRouter(handler)
 
 	server := &nethttp.Server{
-		Addr:    cfg.HTTPAddr,
-		Handler: router,
+		Addr:         cfg.HTTPAddr,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
 
 	go func() {

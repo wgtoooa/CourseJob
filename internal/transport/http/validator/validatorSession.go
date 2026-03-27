@@ -1,14 +1,13 @@
-package http
+package validator
 
 import (
 	"CourseJob/internal/transport/http/dto"
 	"errors"
-	"regexp"
 	"strings"
 )
 
 func ValidatorSession(session *dto.AttendanceSessionRequest) error {
-	var cardUIDRegex = regexp.MustCompile(`^[A-F0-9]{4,7}$`)
+
 	if session == nil {
 		return errors.New("session is nil")
 	}
@@ -24,6 +23,9 @@ func ValidatorSession(session *dto.AttendanceSessionRequest) error {
 	if session.StartedAt.IsZero() {
 		return errors.New("started_at is zero")
 	}
+	if session.FinishedAt.Before(session.StartedAt) {
+		return errors.New("finished_at must be greater than or equal to started_at")
+	}
 	if session.Scans == nil {
 		return errors.New("scans is empty")
 	}
@@ -31,7 +33,7 @@ func ValidatorSession(session *dto.AttendanceSessionRequest) error {
 		return errors.New("scans is empty")
 	}
 	for _, scan := range session.Scans {
-		if !cardUIDRegex.MatchString(scan.CardUID) {
+		if !validUID(scan.CardUID) {
 			return errors.New("invalid card_uid format")
 		}
 	}

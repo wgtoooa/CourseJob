@@ -15,6 +15,7 @@ type DBTX interface {
 }
 type StudentRepo interface {
 	GetByCardUID(ctx context.Context, cardUID string) (*domain.Student, error)
+	CreateStudent(ctx context.Context, st *domain.Student) error
 }
 
 type SessionRepo interface {

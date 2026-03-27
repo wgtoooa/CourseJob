@@ -11,5 +11,6 @@ func NewRouter(h *Handler) nethttp.Handler {
 	r.Get("/health/live", h.Leave)
 	r.Get("/health/ready", h.Ready)
 	r.Post("/api/v1/attendance/sessions", h.CreateAttendanceSession)
+	r.Post("/api/v1/students", h.AddStudent)
 	return r
 }
