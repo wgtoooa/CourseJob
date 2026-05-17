@@ -17,6 +17,9 @@
 - `POST /api/v1/student`
 - `POST /api/v1/attendance/sessions`
 - `POST /api/v1/schedule`
+- `GET /api/v1/schedule?course=N`
+- `GET /api/v1/plan?course=N`
+- `PUT /api/v1/plan`
 - `GET /api/v1/teachers`
 - `GET /api/v1/subjects`
 - `GET /api/v1/rooms`
@@ -218,7 +221,12 @@ Success `200`:
 
 ```json
 {
-  "status": "success"
+  "ok": true,
+  "status": "success",
+  "course": 3,
+  "week_number": 14,
+  "lessons_count": 120,
+  "updated_at": "2026-05-17T19:00:00Z"
 }
 ```
 
@@ -226,6 +234,99 @@ Errors:
 
 - `400` invalid request body.
 - `500` failed import.
+
+### GET `/api/v1/schedule`
+
+Returns schedule by course (all weeks in one response).
+
+Required query:
+- `course` (`1..4`)
+
+Optional filters:
+- `week` (`1..14`)
+- `group` (substring, case-insensitive)
+- `day` (exact, case-insensitive)
+- `type` (exact, case-insensitive)
+- `teacher` (substring, case-insensitive)
+- `subject` (substring, case-insensitive)
+
+Example:
+
+```text
+GET /api/v1/schedule?course=3&week=14&group=601&day=Пн&type=lab&teacher=Яцков&subject=БИС
+```
+
+Success `200` (trimmed shape):
+
+```json
+{
+  "course": 3,
+  "generated_at": "2026-05-17T19:00:00Z",
+  "groups": [
+    { "id": "601", "name": "601", "count": 25 }
+  ],
+  "weeks": [
+    {
+      "name": "14-я неделя",
+      "generated_at": "2026-05-17T19:00:00Z",
+      "course": 3,
+      "semester": 6,
+      "week_number": 14,
+      "date_range": "12.05.2026 — 18.05.2026",
+      "groups": [
+        { "id": "601", "name": "601", "count": 25 }
+      ],
+      "lessons": []
+    }
+  ]
+}
+```
+
+### GET `/api/v1/plan`
+
+Required query:
+- `course` (`1..4`)
+
+Success `200`:
+
+```json
+[
+  {
+    "course": 3,
+    "subject": "Математический анализ",
+    "planned_pairs": 24
+  },
+  {
+    "course": 3,
+    "subject": "Алгебра",
+    "planned_pairs": 18
+  }
+]
+```
+
+### PUT `/api/v1/plan`
+
+Request:
+
+```json
+{
+  "course": 3,
+  "subject": "Математический анализ",
+  "planned_pairs": 24
+}
+```
+
+Behavior:
+- upsert by `(course, normalized subject)` where subject is normalized by `trim + lower`.
+- `planned_pairs` must be a non-negative integer.
+
+Success `200`:
+
+```json
+{
+  "status": "success"
+}
+```
 
 ## 7) Teachers
 

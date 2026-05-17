@@ -27,7 +27,7 @@ func (t *TeacherRepository) UpSetTeacher(ctx context.Context, teacher *domain.Te
 	post := strings.TrimSpace(teacher.Post)
 
 	query := `
-		INSERT INTO teacher(full_name,post)
+		INSERT INTO teachers(full_name,post)
 		VALUES ($1,$2)
 		ON CONFLICT (full_name)
 		DO UPDATE SET
@@ -48,7 +48,7 @@ func (t *TeacherRepository) UpSetTeacher(ctx context.Context, teacher *domain.Te
 	return nil
 }
 func (t *TeacherRepository) GetTeachers(ctx context.Context) ([]domain.Teacher, error) {
-	query := `SELECT full_name, post FROM teacher`
+	query := `SELECT full_name, post FROM teachers ORDER BY full_name`
 	var teachers []domain.Teacher
 
 	rows, err := t.db.Query(ctx, query)

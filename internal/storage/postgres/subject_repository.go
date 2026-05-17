@@ -25,10 +25,6 @@ func (s *SubjectRepository) UpSetSubject(ctx context.Context, subject *domain.Su
 		return errors.New("subject name is empty")
 	}
 
-	if err := s.ensureSubjectCatalogTable(ctx); err != nil {
-		return err
-	}
-
 	const query = `
 INSERT INTO subject_catalog(name)
 VALUES ($1)
@@ -39,10 +35,6 @@ ON CONFLICT (name) DO NOTHING`
 }
 
 func (s *SubjectRepository) GetSubjects(ctx context.Context) ([]domain.Subject, error) {
-	if err := s.ensureSubjectCatalogTable(ctx); err != nil {
-		return nil, err
-	}
-
 	const query = `SELECT id, name FROM subject_catalog ORDER BY name`
 
 	rows, err := s.db.Query(ctx, query)
@@ -65,17 +57,6 @@ func (s *SubjectRepository) GetSubjects(ctx context.Context) ([]domain.Subject, 
 	}
 
 	return subjects, nil
-}
-
-func (s *SubjectRepository) ensureSubjectCatalogTable(ctx context.Context) error {
-	const query = `
-CREATE TABLE IF NOT EXISTS subject_catalog (
-    id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE
-)`
-
-	_, err := s.db.Exec(ctx, query)
-	return err
 }
 
 func normalizeSubjectName(value string) string {

@@ -31,7 +31,7 @@ func (s *AttendanceService) GetTeachers(ctx context.Context) ([]TeachersExport, 
 
 	result := make([]TeachersExport, 0, len(teachers))
 	for _, teacher := range teachers {
-		data := strings.ToLower(strings.Join(strings.Fields(teacher.Post+" "+teacher.FullName), ""))
+		data := strings.Join(strings.Fields(strings.TrimSpace(teacher.Post+" "+teacher.FullName)), " ")
 		result = append(result, TeachersExport{PostFullName: data})
 	}
 

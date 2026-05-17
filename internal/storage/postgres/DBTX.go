@@ -12,6 +12,7 @@ type DBTX interface {
 	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error)
 	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+	CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error)
 }
 type StudentRepo interface {
 	GetByCardUID(ctx context.Context, cardUID string) (*domain.Student, error)
@@ -29,6 +30,7 @@ type ScheduleRepo interface {
 	UpSetWeekSchedule(ctx context.Context, weekSchedule *domain.WeekSchedule) error
 	UpSetLessons(ctx context.Context, lessons *domain.ScheduleLesson) error
 	UpSetGroup(ctx context.Context, group *domain.ScheduleGroup) error
+	GetCourseSchedule(ctx context.Context, course int, filters domain.ScheduleFilters) (*domain.ScheduleCourse, error)
 }
 
 type TeacherRepo interface {
@@ -44,6 +46,11 @@ type SubjectRepo interface {
 type RoomRepo interface {
 	UpSetRoom(ctx context.Context, room *domain.Room) error
 	GetRooms(ctx context.Context) ([]domain.Room, error)
+}
+
+type PlanRepo interface {
+	GetPlanByCourse(ctx context.Context, course int) ([]domain.PlanItem, error)
+	UpsertPlanItem(ctx context.Context, item *domain.PlanItem) error
 }
 
 type TxManager struct {
@@ -62,6 +69,7 @@ type Repository interface {
 	Teachers() TeacherRepo
 	Subjects() SubjectRepo
 	Rooms() RoomRepo
+	Plan() PlanRepo
 }
 
 func NewRepositories(db DBTX) Repository {
@@ -73,6 +81,7 @@ func NewRepositories(db DBTX) Repository {
 		teacherRepo:  NewTeacherRepository(db),
 		subjectRepo:  NewSubjectRepository(db),
 		roomRepo:     NewRoomRepository(db),
+		planRepo:     NewPlanRepository(db),
 	}
 }
 
@@ -84,6 +93,7 @@ type repositories struct {
 	teacherRepo  TeacherRepo
 	subjectRepo  SubjectRepo
 	roomRepo     RoomRepo
+	planRepo     PlanRepo
 }
 
 func (re *repositories) Students() StudentRepo {
@@ -92,6 +102,7 @@ func (re *repositories) Students() StudentRepo {
 func (re *repositories) Teachers() TeacherRepo { return re.teacherRepo }
 func (re *repositories) Subjects() SubjectRepo { return re.subjectRepo }
 func (re *repositories) Rooms() RoomRepo       { return re.roomRepo }
+func (re *repositories) Plan() PlanRepo        { return re.planRepo }
 func (re *repositories) Sessions() SessionRepo {
 	return re.sessionRepo
 }

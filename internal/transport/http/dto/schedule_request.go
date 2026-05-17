@@ -6,6 +6,7 @@ type WeekScheduleRequest struct {
 	Course      int                     `json:"course"`
 	Semester    int                     `json:"semester"`
 	WeekNumber  int                     `json:"week_number"`
+	DateRange   string                  `json:"date_range"`
 	Groups      []ScheduleGroupRequest  `json:"groups"`
 	Lessons     []ScheduleLessonRequest `json:"lessons"`
 }
@@ -18,20 +19,22 @@ type ScheduleGroupRequest struct {
 }
 
 type ScheduleLessonRequest struct {
-	Day         string  `json:"day"`
-	DayNumber   int     `json:"day_number"`
-	Pair        int     `json:"pair"`
-	Duration    int     `json:"duration"`
-	Time        string  `json:"time"`
-	Group       string  `json:"group"`
-	Type        string  `json:"type"`
-	Subject     string  `json:"subject"`
-	Teacher     *string `json:"teacher"`
-	Room        *string `json:"room"`
-	Subgroup    *string `json:"subgroup"`
-	Frequency   *string `json:"frequency"`
-	PeriodStart *string `json:"period_start"`
-	PeriodEnd   *string `json:"period_end"`
-	Comment     *string `json:"comment"`
-	Cancelled   bool    `json:"cancelled"`
+	Day           string  `json:"day"`
+	DayNumber     int     `json:"day_number"`
+	Date          *string `json:"date"`
+	Pair          int     `json:"pair"`
+	Duration      int     `json:"duration"`
+	Time          string  `json:"time"`
+	Group         string  `json:"group"`
+	Type          string  `json:"type"`
+	Subject       string  `json:"subject"`
+	Teacher       *string `json:"teacher"`
+	Room          *string `json:"room"`
+	Subgroup      *string `json:"subgroup"`
+	Frequency     *string `json:"frequency"`
+	PeriodStart   *string `json:"period_start"`
+	PeriodEnd     *string `json:"period_end"`
+	Comment       *string `json:"comment"`
+	Cancelled     bool    `json:"cancelled"`
+	GoogleSheetID *string `json:"google_sheet_id"`
 }

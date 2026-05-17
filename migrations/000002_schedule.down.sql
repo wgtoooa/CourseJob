@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS schedule_lesson;
+DROP TABLE IF EXISTS plan_item;
 DROP TABLE IF EXISTS room_catalog;
 DROP TABLE IF EXISTS subject_catalog;
 DROP TABLE IF EXISTS schedule_group;

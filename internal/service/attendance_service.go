@@ -87,7 +87,7 @@ func (s *AttendanceService) ProcessAttendance(
 			if err != nil {
 				return err
 			}
-			student, err := s.findStudentByCardUID(ctx, repo, scan.CardUID)
+			student, err := repo.Students().GetByCardUID(ctx, cardHash)
 			if err != nil {
 				return err
 			}

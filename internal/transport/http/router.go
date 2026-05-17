@@ -11,6 +11,7 @@ func NewRouter(h *Handler, log *log.Logger) nethttp.Handler {
 
 	//r.Post("api/v1/login", h.Login)
 	//r.Post("api/v1/register", h.Register)
+	r.Use(CORS())
 	logging := Logging(log)
 	r.Get("/health/live", h.Leave)
 	r.Get("/health/ready", h.Ready)
@@ -18,8 +19,11 @@ func NewRouter(h *Handler, log *log.Logger) nethttp.Handler {
 	r.Get("/api/v1/teachers", h.GetTeachers)
 	r.Get("/api/v1/subjects", h.GetSubjects)
 	r.Get("/api/v1/rooms", h.GetRooms)
+	r.Get("/api/v1/schedule", h.GetScheduleByCourse)
+	r.Get("/api/v1/plan", h.GetPlanByCourse)
 	r.Post("/api/v1/attendance/sessions", h.CreateAttendanceSession)
 	r.Post("/api/v1/student", h.AddStudent)
 	r.Post("/api/v1/schedule", h.ScheduleWebHook)
+	r.Put("/api/v1/plan", h.UpsertPlanItem)
 	return logging(r)
 }

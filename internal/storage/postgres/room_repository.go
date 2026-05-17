@@ -25,10 +25,6 @@ func (r *RoomRepository) UpSetRoom(ctx context.Context, room *domain.Room) error
 		return errors.New("room name is empty")
 	}
 
-	if err := r.ensureRoomCatalogTable(ctx); err != nil {
-		return err
-	}
-
 	const query = `
 INSERT INTO room_catalog(name)
 VALUES ($1)
@@ -39,10 +35,6 @@ ON CONFLICT (name) DO NOTHING`
 }
 
 func (r *RoomRepository) GetRooms(ctx context.Context) ([]domain.Room, error) {
-	if err := r.ensureRoomCatalogTable(ctx); err != nil {
-		return nil, err
-	}
-
 	const query = `SELECT id, name FROM room_catalog ORDER BY name`
 
 	rows, err := r.db.Query(ctx, query)
@@ -65,17 +57,6 @@ func (r *RoomRepository) GetRooms(ctx context.Context) ([]domain.Room, error) {
 	}
 
 	return rooms, nil
-}
-
-func (r *RoomRepository) ensureRoomCatalogTable(ctx context.Context) error {
-	const query = `
-CREATE TABLE IF NOT EXISTS room_catalog (
-    id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE
-)`
-
-	_, err := r.db.Exec(ctx, query)
-	return err
 }
 
 func normalizeRoomName(value string) string {
