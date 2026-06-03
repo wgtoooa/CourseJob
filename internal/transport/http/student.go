@@ -1,15 +1,29 @@
 package http
 
 import (
-	"CourseJob/internal/service"
+	"CourseJob/internal/service/attendance"
 	"CourseJob/internal/transport/http/dto"
 	"CourseJob/internal/transport/http/validator"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"github.com/jackc/pgx/v5/pgconn"
+	"io"
 	nethttp "net/http"
 )
 
+// AddStudent creates one or many students.
+// @Summary Create students
+// @Description Creates one student from an object payload or many students from an array payload.
+// @Tags Students
+// @Accept json
+// @Produce json
+// @Param request body dto.StudentRequest true "Student payload (single object or array of objects)"
+// @Success 201 {object} StudentCreateResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/student [post]
 func (h *Handler) AddStudent(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != nethttp.MethodPost {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, jsonResponse{
@@ -21,36 +35,48 @@ func (h *Handler) AddStudent(w nethttp.ResponseWriter, r *nethttp.Request) {
 	r.Body = nethttp.MaxBytesReader(w, r.Body, 1<<20) //~ 1 MB
 	defer r.Body.Close()
 
-	var req dto.StudentRequest
-	dec := json.NewDecoder(r.Body)
-
-	if err := dec.Decode(&req); err != nil {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
 		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",
 			"error":  "invalid request body",
 		})
 		return
 	}
-	validator.NormalizeStudentRequest(&req)
 
-	if err := validator.ValidatorStudent(&req); err != nil {
+	reqs, err := parseStudentRequests(body)
+	if err != nil {
 		writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
 			"status": "error",
-			"error":  err.Error(),
+			"error":  "invalid request body",
 		})
 		return
 	}
-	input := service.StudentInput{
-		FullName:  req.FullName,
-		Course:    req.Course,
-		GroupName: req.GroupName,
-		Email:     req.Email,
-		CardUID:   req.CardUID,
-		CreatedAt: req.CreatedAt,
+
+	inputs := make([]attendance.StudentInput, 0, len(reqs))
+	for i := range reqs {
+		validator.NormalizeStudentRequest(&reqs[i])
+		if err := validator.ValidatorStudent(&reqs[i]); err != nil {
+			writeJSON(w, nethttp.StatusBadRequest, jsonResponse{
+				"status": "error",
+				"error":  err.Error(),
+			})
+			return
+		}
+
+		inputs = append(inputs, attendance.StudentInput{
+			FullName:  reqs[i].FullName,
+			Course:    reqs[i].Course,
+			GroupName: reqs[i].GroupName,
+			Email:     reqs[i].Email,
+			CardUID:   reqs[i].CardUID,
+			CreatedAt: reqs[i].CreatedAt,
+		})
 	}
 
-	if err := h.attendanceService.CreateStudent(r.Context(), &input); err != nil {
-		if errors.Is(err, service.ErrStudentExists) {
+	err = h.attendanceService.CreateStudents(r.Context(), inputs)
+	if err != nil {
+		if errors.Is(err, attendance.ErrStudentExists) {
 			writeJSON(w, nethttp.StatusConflict, jsonResponse{
 				"status": "error",
 				"error":  "student with this card_uid already exists",
@@ -62,7 +88,7 @@ func (h *Handler) AddStudent(w nethttp.ResponseWriter, r *nethttp.Request) {
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			writeJSON(w, nethttp.StatusConflict, jsonResponse{
 				"status": "error",
-				"error":  "student with this card_uid already exists",
+				"error":  "student with this card_uid or email already exists",
 			})
 			return
 		}
@@ -73,7 +99,43 @@ func (h *Handler) AddStudent(w nethttp.ResponseWriter, r *nethttp.Request) {
 		})
 		return
 	}
+
+	if len(inputs) == 1 {
+		writeJSON(w, nethttp.StatusCreated, jsonResponse{
+			"status": "created",
+		})
+		return
+	}
+
 	writeJSON(w, nethttp.StatusCreated, jsonResponse{
-		"status": "created",
+		"status":        "created",
+		"created_count": len(inputs),
 	})
+}
+
+func parseStudentRequests(body []byte) ([]dto.StudentRequest, error) {
+	trimmed := bytes.TrimSpace(body)
+	if len(trimmed) == 0 {
+		return nil, errors.New("empty body")
+	}
+
+	switch trimmed[0] {
+	case '{':
+		var req dto.StudentRequest
+		if err := json.Unmarshal(trimmed, &req); err != nil {
+			return nil, err
+		}
+		return []dto.StudentRequest{req}, nil
+	case '[':
+		var reqs []dto.StudentRequest
+		if err := json.Unmarshal(trimmed, &reqs); err != nil {
+			return nil, err
+		}
+		if len(reqs) == 0 {
+			return nil, errors.New("empty students array")
+		}
+		return reqs, nil
+	default:
+		return nil, errors.New("invalid json")
+	}
 }

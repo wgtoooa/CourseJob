@@ -6,6 +6,13 @@ import (
 	"time"
 )
 
+// Leave handles liveness checks.
+// @Summary Liveness probe
+// @Description Returns service liveness status.
+// @Tags Health
+// @Produce json
+// @Success 200 {object} HealthLiveResponse
+// @Router /health/live [get]
 func (h *Handler) Leave(w nethttp.ResponseWriter, r *nethttp.Request) {
 	writeJSON(w, nethttp.StatusOK, jsonResponse{
 		"status": "ok",
@@ -13,6 +20,14 @@ func (h *Handler) Leave(w nethttp.ResponseWriter, r *nethttp.Request) {
 	return
 }
 
+// Ready handles readiness checks.
+// @Summary Readiness probe
+// @Description Verifies shutdown flag and database availability.
+// @Tags Health
+// @Produce json
+// @Success 200 {object} HealthReadyResponse
+// @Failure 503 {object} ErrorResponse
+// @Router /health/ready [get]
 func (h *Handler) Ready(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if h.ready != nil && !h.ready.Load() {
 		writeJSON(w, nethttp.StatusServiceUnavailable, jsonResponse{

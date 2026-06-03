@@ -1,7 +1,7 @@
 package http
 
 import (
-	"CourseJob/internal/service"
+	"CourseJob/internal/service/schedule"
 	"CourseJob/internal/transport/http/dto"
 	"encoding/json"
 	"errors"
@@ -12,6 +12,16 @@ import (
 	"strings"
 )
 
+// GetPlanByCourse returns planned pairs for a course.
+// @Summary Get plan by course
+// @Description Returns planned pairs grouped by subject for the selected course.
+// @Tags Plan
+// @Produce json
+// @Param course query int true "Course number (1-4)"
+// @Success 200 {array} dto.PlanItemResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/plan [get]
 func (h *Handler) GetPlanByCourse(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != nethttp.MethodGet {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, map[string]interface{}{
@@ -39,7 +49,7 @@ func (h *Handler) GetPlanByCourse(w nethttp.ResponseWriter, r *nethttp.Request) 
 		return
 	}
 
-	items, err := h.attendanceService.GetPlanByCourse(r.Context(), course)
+	items, err := h.scheduleService.GetPlanByCourse(r.Context(), course)
 	if err != nil {
 		log.Printf("get plan failed: course=%d err=%v", course, err)
 		writeJSON(w, nethttp.StatusInternalServerError, map[string]interface{}{
@@ -62,6 +72,17 @@ func (h *Handler) GetPlanByCourse(w nethttp.ResponseWriter, r *nethttp.Request) 
 	writeJSON(w, nethttp.StatusOK, response)
 }
 
+// UpsertPlanItem creates or updates one plan item.
+// @Summary Upsert plan item
+// @Description Creates or updates planned pairs by course and subject.
+// @Tags Plan
+// @Accept json
+// @Produce json
+// @Param request body dto.PlanUpsertRequest true "Plan upsert payload"
+// @Success 200 {object} PlanUpsertSuccessResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/plan [put]
 func (h *Handler) UpsertPlanItem(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != nethttp.MethodPut {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, map[string]interface{}{
@@ -84,7 +105,7 @@ func (h *Handler) UpsertPlanItem(w nethttp.ResponseWriter, r *nethttp.Request) {
 		return
 	}
 
-	err := h.attendanceService.UpsertPlanItem(r.Context(), service.PlanUpsertInput{
+	err := h.scheduleService.UpsertPlanItem(r.Context(), schedule.PlanUpsertInput{
 		Course:       req.Course,
 		Subject:      req.Subject,
 		PlannedPairs: req.PlannedPairs,

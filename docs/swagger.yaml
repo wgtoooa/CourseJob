@@ -1,0 +1,1288 @@
+basePath: /
+definitions:
+  dto.AdminCreateUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+    type: object
+  dto.AdminUpdateUserActiveRequest:
+    properties:
+      is_active:
+        type: boolean
+    type: object
+  dto.AdminUpdateUserRoleRequest:
+    properties:
+      role:
+        type: string
+    type: object
+  dto.AdminUserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      role:
+        type: string
+    type: object
+  dto.AdminUsersListResponse:
+    properties:
+      count:
+        type: integer
+      status:
+        type: string
+      users:
+        items:
+          $ref: '#/definitions/dto.AdminUserResponse'
+        type: array
+    type: object
+  dto.AttendanceResponse:
+    properties:
+      not_found_cards:
+        items:
+          type: string
+        type: array
+      saved_events:
+        type: integer
+      session_id:
+        type: integer
+    type: object
+  dto.AttendanceScanRequest:
+    properties:
+      card_uid:
+        type: string
+      scanned_at:
+        type: string
+    required:
+    - scanned_at
+    type: object
+  dto.AttendanceSessionRequest:
+    properties:
+      data:
+        type: string
+      finished_at:
+        type: string
+      room:
+        type: string
+      scans:
+        items:
+          $ref: '#/definitions/dto.AttendanceScanRequest'
+        type: array
+      source:
+        type: string
+      started_at:
+        type: string
+    required:
+    - data
+    - finished_at
+    - scans
+    - started_at
+    type: object
+  dto.AuthTokenResponse:
+    properties:
+      access_token:
+        type: string
+      email:
+        type: string
+      expires_at:
+        type: string
+      expires_in:
+        type: integer
+      refresh_expires_at:
+        type: string
+      refresh_expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      role:
+        type: string
+      token_type:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.CourseScheduleResponse:
+    properties:
+      course:
+        type: integer
+      generated_at:
+        type: string
+      groups:
+        items:
+          $ref: '#/definitions/dto.ScheduleGroupSummaryDTO'
+        type: array
+      weeks:
+        items:
+          $ref: '#/definitions/dto.WeekScheduleResponse'
+        type: array
+    type: object
+  dto.CreatedUserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        type: string
+    type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.PlanItemResponse:
+    properties:
+      course:
+        type: integer
+      planned_pairs:
+        type: integer
+      subject:
+        type: string
+    type: object
+  dto.PlanUpsertRequest:
+    properties:
+      course:
+        type: integer
+      planned_pairs:
+        type: integer
+      subject:
+        type: string
+    type: object
+  dto.RefreshRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  dto.RegisterStudentRequest:
+    properties:
+      course:
+        type: integer
+      email:
+        type: string
+      fullname:
+        type: string
+      group:
+        type: string
+      password:
+        type: string
+      uid:
+        type: string
+    type: object
+  dto.RevokeRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  dto.ScheduleGroupRequest:
+    properties:
+      department:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      specialty:
+        type: string
+    type: object
+  dto.ScheduleGroupSummaryDTO:
+    properties:
+      count:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.ScheduleLessonRequest:
+    properties:
+      cancelled:
+        type: boolean
+      comment:
+        type: string
+      date:
+        type: string
+      day:
+        type: string
+      day_number:
+        type: integer
+      duration:
+        type: integer
+      frequency:
+        type: string
+      google_sheet_id:
+        type: string
+      group:
+        type: string
+      pair:
+        type: integer
+      period_end:
+        type: string
+      period_start:
+        type: string
+      room:
+        type: string
+      subgroup:
+        type: string
+      subject:
+        type: string
+      teacher:
+        type: string
+      time:
+        type: string
+      type:
+        type: string
+    type: object
+  dto.ScheduleLessonResponse:
+    properties:
+      cancelled:
+        type: boolean
+      comment:
+        type: string
+      date:
+        type: string
+      day:
+        type: string
+      day_number:
+        type: integer
+      duration:
+        type: integer
+      frequency:
+        type: string
+      google_sheet_id:
+        type: string
+      group:
+        type: string
+      pair:
+        type: integer
+      period_end:
+        type: string
+      period_start:
+        type: string
+      room:
+        type: string
+      subgroup:
+        type: string
+      subject:
+        type: string
+      teacher:
+        type: string
+      time:
+        type: string
+      type:
+        type: string
+      week_number:
+        type: integer
+    type: object
+  dto.StudentAttendanceRecordResponse:
+    properties:
+      date:
+        type: string
+      finished_at:
+        type: string
+      group:
+        type: string
+      lesson_type:
+        type: string
+      pair:
+        type: integer
+      present:
+        type: boolean
+      room:
+        type: string
+      scanned_at:
+        type: string
+      session_id:
+        type: integer
+      source:
+        type: string
+      started_at:
+        type: string
+      subject:
+        type: string
+      teacher:
+        type: string
+    type: object
+  dto.StudentAttendanceResponse:
+    properties:
+      records:
+        items:
+          $ref: '#/definitions/dto.StudentAttendanceRecordResponse'
+        type: array
+      status:
+        type: string
+      student_id:
+        type: integer
+      summary:
+        $ref: '#/definitions/dto.StudentAttendanceSummary'
+    type: object
+  dto.StudentAttendanceSummary:
+    properties:
+      absent_count:
+        type: integer
+      attendance_percent:
+        type: number
+      present_count:
+        type: integer
+      total_sessions:
+        type: integer
+    type: object
+  dto.StudentRequest:
+    properties:
+      card_uid:
+        type: string
+      course:
+        type: integer
+      created_at:
+        type: string
+      email:
+        type: string
+      full_name:
+        type: string
+      group_name:
+        type: string
+      uid:
+        type: string
+    type: object
+  dto.WeekScheduleRequest:
+    properties:
+      course:
+        type: integer
+      date_range:
+        type: string
+      generated_at:
+        type: string
+      groups:
+        items:
+          $ref: '#/definitions/dto.ScheduleGroupRequest'
+        type: array
+      lessons:
+        items:
+          $ref: '#/definitions/dto.ScheduleLessonRequest'
+        type: array
+      name:
+        type: string
+      semester:
+        type: integer
+      week_number:
+        type: integer
+    type: object
+  dto.WeekScheduleResponse:
+    properties:
+      course:
+        type: integer
+      date_range:
+        type: string
+      generated_at:
+        type: string
+      groups:
+        items:
+          $ref: '#/definitions/dto.ScheduleGroupSummaryDTO'
+        type: array
+      lessons:
+        items:
+          $ref: '#/definitions/dto.ScheduleLessonResponse'
+        type: array
+      name:
+        type: string
+      semester:
+        type: integer
+      week_number:
+        type: integer
+    type: object
+  http.AttendanceCreateResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.AttendanceResponse'
+      status:
+        example: created
+        type: string
+    type: object
+  http.ErrorResponse:
+    properties:
+      error:
+        example: invalid request body
+        type: string
+      message:
+        example: course query parameter is required
+        type: string
+      status:
+        example: error
+        type: string
+    type: object
+  http.GroupCatalogItem:
+    properties:
+      count:
+        example: 28
+        type: integer
+      id:
+        example: "4"
+        type: string
+      name:
+        example: Группа 4
+        type: string
+    type: object
+  http.GroupsResponse:
+    properties:
+      course:
+        example: 3
+        type: integer
+      groups:
+        items:
+          $ref: '#/definitions/http.GroupCatalogItem'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  http.HealthLiveResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+  http.HealthReadyResponse:
+    properties:
+      db:
+        example: connected
+        type: string
+      status:
+        example: ok
+        type: string
+    type: object
+  http.PlanUpsertSuccessResponse:
+    properties:
+      status:
+        example: success
+        type: string
+    type: object
+  http.RoomCatalogItem:
+    properties:
+      name:
+        example: "115"
+        type: string
+    type: object
+  http.RoomsResponse:
+    properties:
+      rooms:
+        items:
+          $ref: '#/definitions/http.RoomCatalogItem'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  http.ScheduleImportSuccessResponse:
+    properties:
+      course:
+        example: 3
+        type: integer
+      lessons_count:
+        example: 120
+        type: integer
+      ok:
+        example: true
+        type: boolean
+      status:
+        example: success
+        type: string
+      updated_at:
+        example: "2026-05-17T19:00:00Z"
+        type: string
+      week_number:
+        example: 14
+        type: integer
+    type: object
+  http.StudentCreateResponse:
+    properties:
+      created_count:
+        example: 2
+        type: integer
+      status:
+        example: created
+        type: string
+    type: object
+  http.SubjectCatalogItem:
+    properties:
+      name:
+        example: Высшая математика
+        type: string
+    type: object
+  http.SubjectsResponse:
+    properties:
+      status:
+        example: success
+        type: string
+      subjects:
+        items:
+          $ref: '#/definitions/http.SubjectCatalogItem'
+        type: array
+    type: object
+  http.TeacherCatalogItem:
+    properties:
+      post_full_name:
+        example: доц. Иванов И.И.
+        type: string
+    type: object
+  http.TeachersResponse:
+    properties:
+      status:
+        example: success
+        type: string
+      teachers:
+        items:
+          $ref: '#/definitions/http.TeacherCatalogItem'
+        type: array
+    type: object
+info:
+  contact: {}
+  description: API for schedule import/read, attendance processing and study plan
+    management.
+  title: CourseJob API
+  version: "1.0"
+paths:
+  /admin/users:
+    get:
+      description: Returns users with optional role/email filters. Requires Bearer
+        token with admin role.
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 'Role filter: student|teacher|admin'
+        in: query
+        name: role
+        type: string
+      - description: Email contains filter
+        in: query
+        name: email
+        type: string
+      - description: Limit (default 100, max 200)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AdminUsersListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: List users by admin
+      tags:
+      - Admin
+    post:
+      consumes:
+      - application/json
+      description: Creates teacher or admin account. Requires Bearer token with admin
+        role.
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Create user payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AdminCreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreatedUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Create user by admin
+      tags:
+      - Admin
+  /admin/users/{id}/active:
+    patch:
+      consumes:
+      - application/json
+      description: Updates user is_active status. Requires Bearer token with admin
+        role.
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Active update payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AdminUpdateUserActiveRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AdminUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Update user active flag
+      tags:
+      - Admin
+  /admin/users/{id}/role:
+    patch:
+      consumes:
+      - application/json
+      description: 'Updates user role. Allowed roles: teacher or admin. Requires Bearer
+        token with admin role.'
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role update payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AdminUpdateUserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AdminUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Update user role
+      tags:
+      - Admin
+  /api/v1/attendance/sessions:
+    post:
+      consumes:
+      - application/json
+      description: Accepts a session with scans and stores attendance events.
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Attendance session payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AttendanceSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.AttendanceCreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Create attendance session
+      tags:
+      - Attendance
+  /api/v1/groups:
+    get:
+      description: Returns unique groups for the selected course from schedule data.
+      parameters:
+      - description: Course number (1-4)
+        in: query
+        name: course
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.GroupsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get groups by course
+      tags:
+      - Catalog
+  /api/v1/plan:
+    get:
+      description: Returns planned pairs grouped by subject for the selected course.
+      parameters:
+      - description: Course number (1-4)
+        in: query
+        name: course
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.PlanItemResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get plan by course
+      tags:
+      - Plan
+    put:
+      consumes:
+      - application/json
+      description: Creates or updates planned pairs by course and subject.
+      parameters:
+      - description: Plan upsert payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PlanUpsertRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.PlanUpsertSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Upsert plan item
+      tags:
+      - Plan
+  /api/v1/rooms:
+    get:
+      description: Returns all rooms from the catalog.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.RoomsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get rooms
+      tags:
+      - Catalog
+  /api/v1/schedule:
+    get:
+      description: Returns schedule grouped by weeks with optional filters.
+      parameters:
+      - description: Course number (1-4)
+        in: query
+        name: course
+        required: true
+        type: integer
+      - description: Week number
+        in: query
+        name: week
+        type: integer
+      - description: Group filter
+        in: query
+        name: group
+        type: string
+      - description: Day filter
+        in: query
+        name: day
+        type: string
+      - description: Lesson type filter
+        in: query
+        name: type
+        type: string
+      - description: Teacher filter
+        in: query
+        name: teacher
+        type: string
+      - description: Subject filter
+        in: query
+        name: subject
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CourseScheduleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get schedule by course
+      tags:
+      - Schedule
+    post:
+      consumes:
+      - application/json
+      description: Imports one course schedule chunk and publishes an SSE update event.
+      parameters:
+      - description: Week schedule payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.WeekScheduleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.ScheduleImportSuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Import schedule
+      tags:
+      - Schedule
+  /api/v1/sse/schedule:
+    get:
+      description: Opens an SSE stream and sends `schedule_updated` events when schedule
+        import succeeds.
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: SSE stream
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Subscribe to schedule updates
+      tags:
+      - Schedule
+  /api/v1/student:
+    post:
+      consumes:
+      - application/json
+      description: Creates one student from an object payload or many students from
+        an array payload.
+      parameters:
+      - description: Student payload (single object or array of objects)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/http.StudentCreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Create students
+      tags:
+      - Students
+  /api/v1/student/me/attendance:
+    get:
+      description: Returns attendance records and summary for the current authenticated
+        student.
+      parameters:
+      - description: Bearer access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Start date in YYYY-MM-DD
+        in: query
+        name: from
+        type: string
+      - description: End date in YYYY-MM-DD
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StudentAttendanceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get my attendance
+      tags:
+      - Students
+  /api/v1/subjects:
+    get:
+      description: Returns all subjects from the catalog.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SubjectsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get subjects
+      tags:
+      - Catalog
+  /api/v1/teachers:
+    get:
+      description: Returns all teachers from the catalog.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.TeachersResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Get teachers
+      tags:
+      - Catalog
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates by email and password and returns access token.
+      parameters:
+      - description: Login payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthTokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Login
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Issues a new access/refresh token pair using a valid refresh token.
+      parameters:
+      - description: Refresh token payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Refresh token
+      tags:
+      - Auth
+  /auth/register/student:
+    post:
+      consumes:
+      - application/json
+      description: Registers a student user and creates both student profile and user
+        account in one transaction.
+      parameters:
+      - description: Student registration payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterStudentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.AuthTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Register student
+      tags:
+      - Auth
+  /auth/revoke:
+    post:
+      consumes:
+      - application/json
+      description: Revokes a refresh token so it can no longer be used.
+      parameters:
+      - description: Revoke token payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RevokeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Revoke token
+      tags:
+      - Auth
+  /health/live:
+    get:
+      description: Returns service liveness status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.HealthLiveResponse'
+      summary: Liveness probe
+      tags:
+      - Health
+  /health/ready:
+    get:
+      description: Verifies shutdown flag and database availability.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.HealthReadyResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Readiness probe
+      tags:
+      - Health
+schemes:
+- https
+swagger: "2.0"

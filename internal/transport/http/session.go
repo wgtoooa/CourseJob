@@ -1,13 +1,27 @@
 package http
 
 import (
-	"CourseJob/internal/service"
+	"CourseJob/internal/service/attendance"
 	"CourseJob/internal/transport/http/dto"
 	"CourseJob/internal/transport/http/validator"
 	"encoding/json"
 	nethttp "net/http"
 )
 
+// CreateAttendanceSession saves attendance scans inside one session.
+// @Summary Create attendance session
+// @Description Accepts a session with scans and stores attendance events.
+// @Tags Attendance
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer access token"
+// @Param request body dto.AttendanceSessionRequest true "Attendance session payload"
+// @Success 201 {object} AttendanceCreateResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 403 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/attendance/sessions [post]
 func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != "POST" {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, jsonResponse{
@@ -40,16 +54,17 @@ func (h *Handler) CreateAttendanceSession(w nethttp.ResponseWriter, r *nethttp.R
 		})
 		return
 	}
-	input := service.AttendanceInput{
+	input := attendance.AttendanceInput{
 		Room:       req.Room,
 		Source:     req.Source,
 		StartedAt:  req.StartedAt,
 		FinishedAt: req.FinishedAt,
-		Scans:      make([]service.ProcessAttendanceScanInput, 0, len(req.Scans)),
+		Data:       req.Data,
+		Scans:      make([]attendance.ProcessAttendanceScanInput, 0, len(req.Scans)),
 	}
 
 	for _, scan := range req.Scans {
-		input.Scans = append(input.Scans, service.ProcessAttendanceScanInput{
+		input.Scans = append(input.Scans, attendance.ProcessAttendanceScanInput{
 			CardUID:   scan.CardUID,
 			ScannedAt: scan.ScannedAt,
 		})

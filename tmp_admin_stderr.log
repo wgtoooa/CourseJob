@@ -1,0 +1,7 @@
+2026/05/28 23:08:51 config loaded
+2026/05/28 23:08:51 server started on :18087
+2026/05/28 23:08:51 GET /health/live status=200 duration=0s
+2026/05/28 23:08:52 POST /auth/login status=200 duration=56.5607ms
+2026/05/28 23:08:52 GET /admin/users status=403 duration=0s
+2026/06/01 11:19:33 shutdown signal received
+2026/06/01 11:19:33 server stopped gracefully

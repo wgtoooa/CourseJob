@@ -2,7 +2,7 @@ package http
 
 import (
 	"CourseJob/internal/domain"
-	"CourseJob/internal/service"
+	serviceSchedule "CourseJob/internal/service/schedule"
 	"CourseJob/internal/transport/http/dto"
 	"encoding/json"
 	"fmt"
@@ -12,14 +12,34 @@ import (
 	"time"
 )
 
+// ScheduleWebHook imports a schedule chunk.
+// @Summary Import schedule
+// @Description Imports one course schedule chunk and publishes an SSE update event.
+// @Tags Schedule
+// @Accept json
+// @Produce json
+// @Param request body dto.WeekScheduleRequest true "Week schedule payload"
+// @Success 200 {object} ScheduleImportSuccessResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/schedule [post]
 func (h *Handler) ScheduleWebHook(w nethttp.ResponseWriter, r *nethttp.Request) {
-	if r.Method != nethttp.MethodPost {
+	h.scheduleImportHandler(w, r, nethttp.MethodPost)
+}
+
+func (h *Handler) scheduleImportHandler(
+	w nethttp.ResponseWriter,
+	r *nethttp.Request,
+	expectedMethod string,
+) {
+	if r.Method != expectedMethod {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, map[string]interface{}{
 			"status": "error",
 			"error":  "Method Not Allowed",
 		})
 		return
 	}
+
 	r.Body = nethttp.MaxBytesReader(w, r.Body, 1<<20) //~ 1 MB
 	defer r.Body.Close()
 
@@ -94,11 +114,12 @@ func (h *Handler) ScheduleWebHook(w nethttp.ResponseWriter, r *nethttp.Request) 
 			GoogleSheetID: lesson.GoogleSheetID,
 		})
 	}
-	input := service.ScheduleImportInput{
+	input := serviceSchedule.ScheduleImportInput{
 		WeekSchedule: weekSchedule,
 	}
 
-	if err = h.attendanceService.ScheduleImport(r.Context(), input); err != nil {
+	err = h.scheduleService.ScheduleImport(r.Context(), input)
+	if err != nil {
 		writeJSON(w, nethttp.StatusInternalServerError, map[string]interface{}{
 			"ok":      false,
 			"status":  "error",
@@ -109,16 +130,39 @@ func (h *Handler) ScheduleWebHook(w nethttp.ResponseWriter, r *nethttp.Request) 
 		return
 	}
 
+	updatedAt := time.Now().UTC().Format(time.RFC3339)
+	h.scheduleEvents.publish(scheduleUpdatedEvent{
+		Type:      "schedule_updated",
+		UpdatedAt: updatedAt,
+		Chunk:     req,
+	})
+
 	writeJSON(w, nethttp.StatusOK, map[string]interface{}{
 		"ok":            true,
 		"status":        "success",
 		"course":        req.Course,
 		"week_number":   req.WeekNumber,
 		"lessons_count": len(req.Lessons),
-		"updated_at":    time.Now().UTC().Format(time.RFC3339),
+		"updated_at":    updatedAt,
 	})
 }
 
+// GetScheduleByCourse returns schedule data for a specific course.
+// @Summary Get schedule by course
+// @Description Returns schedule grouped by weeks with optional filters.
+// @Tags Schedule
+// @Produce json
+// @Param course query int true "Course number (1-4)"
+// @Param week query int false "Week number"
+// @Param group query string false "Group filter"
+// @Param day query string false "Day filter"
+// @Param type query string false "Lesson type filter"
+// @Param teacher query string false "Teacher filter"
+// @Param subject query string false "Subject filter"
+// @Success 200 {object} dto.CourseScheduleResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/schedule [get]
 func (h *Handler) GetScheduleByCourse(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != nethttp.MethodGet {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, map[string]interface{}{
@@ -155,7 +199,7 @@ func (h *Handler) GetScheduleByCourse(w nethttp.ResponseWriter, r *nethttp.Reque
 		return
 	}
 
-	data, err := h.attendanceService.GetScheduleByCourse(r.Context(), course, filters)
+	data, err := h.scheduleService.GetScheduleByCourse(r.Context(), course, filters)
 	if err != nil {
 		writeJSON(w, nethttp.StatusInternalServerError, map[string]interface{}{
 			"status": "error",
@@ -240,11 +284,12 @@ func parseScheduleFilters(r *nethttp.Request) (domain.ScheduleFilters, error) {
 
 	weekRaw := strings.TrimSpace(r.URL.Query().Get("week"))
 	if weekRaw == "" {
+
 		return f, nil
 	}
 
 	week, err := strconv.Atoi(weekRaw)
-	if err != nil || week < 1 || week > 14 {
+	if err != nil || week < 1 || week > 52 {
 		return domain.ScheduleFilters{}, fmt.Errorf("week must be an integer from 1 to 14")
 	}
 	f.Week = week

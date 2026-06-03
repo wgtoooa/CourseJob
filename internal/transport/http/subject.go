@@ -5,6 +5,14 @@ import (
 	nethttp "net/http"
 )
 
+// GetSubjects returns subjects catalog.
+// @Summary Get subjects
+// @Description Returns all subjects from the catalog.
+// @Tags Catalog
+// @Produce json
+// @Success 200 {object} SubjectsResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/subjects [get]
 func (h *Handler) GetSubjects(w nethttp.ResponseWriter, r *nethttp.Request) {
 	if r.Method != nethttp.MethodGet {
 		writeJSON(w, nethttp.StatusMethodNotAllowed, map[string]interface{}{
@@ -14,7 +22,7 @@ func (h *Handler) GetSubjects(w nethttp.ResponseWriter, r *nethttp.Request) {
 		return
 	}
 
-	subjects, err := h.attendanceService.GetSubjects(r.Context())
+	subjects, err := h.scheduleService.GetSubjects(r.Context())
 	if err != nil {
 		writeJSON(w, nethttp.StatusInternalServerError, map[string]interface{}{
 			"status": "error",

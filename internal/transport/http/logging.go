@@ -3,6 +3,7 @@ package http
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -20,6 +21,10 @@ func Logging(logger *log.Logger) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if logger == nil {
+				next.ServeHTTP(w, r)
+				return
+			}
+			if strings.HasPrefix(r.URL.Path, "/api/v1/sse/") {
 				next.ServeHTTP(w, r)
 				return
 			}

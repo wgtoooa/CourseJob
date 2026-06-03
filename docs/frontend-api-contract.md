@@ -126,6 +126,7 @@ Request:
 {
   "room": "117",
   "source": "rfid-gate-1",
+  "data": "2026-05-12",
   "started_at": "2026-05-12T09:00:00Z",
   "finished_at": "2026-05-12T10:20:00Z",
   "scans": [
@@ -141,6 +142,7 @@ Validation rules:
 
 - `room` is required.
 - `source` is required.
+- `data` is required, format `YYYY-MM-DD` (example: `2026-12-06`).
 - `started_at` is required.
 - `finished_at` is required.
 - `finished_at >= started_at`.
@@ -149,7 +151,7 @@ Validation rules:
   - `card_uid` format `[A-F0-9]{4,7}`
   - `scanned_at` is required.
 - Before validation, server normalizes:
-  - `room` -> lowercase + trim
+  - `room` -> trim
   - `source` -> lowercase + trim
   - `scans[].card_uid` -> uppercase + trim
 

@@ -1,0 +1,10 @@
+2026/05/27 21:50:01 config loaded
+2026/05/27 21:50:01 server started on :18081
+2026/05/27 21:50:01 GET /health/live status=200 duration=0s
+2026/05/27 21:50:01 import delay from generated_at: 845.2229ms, total import time: 47.3012ms
+2026/05/27 21:50:01 POST /api/v1/schedule status=200 duration=54.5097ms
+2026/05/27 21:50:02 POST /auth/register/student status=201 duration=158.8287ms
+2026/05/27 21:50:02 POST /api/v1/attendance/sessions status=201 duration=33.6392ms
+2026/05/27 21:50:02 GET /api/v1/student/me/attendance status=200 duration=8.3922ms
+2026/06/01 11:19:33 shutdown signal received
+2026/06/01 11:19:33 server stopped gracefully

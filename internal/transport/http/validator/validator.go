@@ -1,13 +1,13 @@
 package validator
 
 import (
+	authA "CourseJob/internal/auth"
 	"net/mail"
-	"regexp"
 )
 
 func validUID(uid string) bool {
-	var cardUIDRegex = regexp.MustCompile(`^[A-F0-9]{4,7}$`)
-	return cardUIDRegex.MatchString(uid)
+	_, ok := authA.NormalizeAndValidateCardUID(uid)
+	return ok
 }
 
 func validEmail(email string) bool {

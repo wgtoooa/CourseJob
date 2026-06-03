@@ -26,14 +26,16 @@ type Hasher interface {
 	NeedsRehash(encodedHash string) (bool, error)
 }
 
-type hasher struct{}
+type hasher struct {
+	key []byte
+}
 
-func NewHasher() Hasher {
-	return &hasher{}
+func NewHasher(secret string) Hasher {
+	return &hasher{key: []byte(secret)}
 }
 
 func (h *hasher) Hash(password string) (string, error) {
-	digest := hmacSHA256([]byte(password))
+	digest := h.hmacSHA256([]byte(password))
 	return fmt.Sprintf("%s$v=%d$%s", uidPrefix, uidVersion, hex.EncodeToString(digest)), nil
 }
 
@@ -43,7 +45,7 @@ func (h *hasher) Verify(password string, encodedHash string) (bool, error) {
 		return false, err
 	}
 
-	computed := hmacSHA256([]byte(password))
+	computed := h.hmacSHA256([]byte(password))
 	return subtle.ConstantTimeCompare(stored, computed) == 1, nil
 }
 
@@ -55,8 +57,8 @@ func (h *hasher) NeedsRehash(encodedHash string) (bool, error) {
 	return false, nil
 }
 
-func hmacSHA256(msg []byte) []byte {
-	mac := hmac.New(sha256.New, []byte("coursejob-card-uid-v1"))
+func (h *hasher) hmacSHA256(msg []byte) []byte {
+	mac := hmac.New(sha256.New, h.key)
 	mac.Write(msg)
 	return mac.Sum(nil)
 }

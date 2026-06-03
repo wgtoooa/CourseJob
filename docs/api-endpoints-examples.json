@@ -1,0 +1,383 @@
+{
+  "generated_at": "2026-05-24T00:00:00Z",
+  "base_url": "http://localhost:8080",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/health/live",
+      "request": {
+        "query": {},
+        "body": null
+      },
+      "responses": {
+        "200": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/health/ready",
+      "request": {
+        "query": {},
+        "body": null
+      },
+      "responses": {
+        "200": {
+          "status": "ok",
+          "db": "connected"
+        },
+        "503": {
+          "status": "error",
+          "error": "database is unavailable"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/teachers",
+      "request": {
+        "query": {},
+        "body": null
+      },
+      "responses": {
+        "200": {
+          "status": "success",
+          "teachers": [
+            {
+              "PostFullName": "доц. Яцков Н.Н."
+            }
+          ]
+        },
+        "500": {
+          "status": "error",
+          "error": "error getting teachers: <details>"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/subjects",
+      "request": {
+        "query": {},
+        "body": null
+      },
+      "responses": {
+        "200": {
+          "status": "success",
+          "subjects": [
+            {
+              "Name": "Базы данных"
+            }
+          ]
+        },
+        "500": {
+          "status": "error",
+          "error": "error getting subjects: <details>"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/rooms",
+      "request": {
+        "query": {},
+        "body": null
+      },
+      "responses": {
+        "200": {
+          "status": "success",
+          "rooms": [
+            {
+              "Name": "A-201"
+            }
+          ]
+        },
+        "500": {
+          "status": "error",
+          "error": "error getting rooms: <details>"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/student",
+      "request": {
+        "query": {},
+        "body": {
+          "full_name": "Ivan Ivanov",
+          "course": 2,
+          "group_name": "53",
+          "email": "ivanov@example.com",
+          "card_uid": "A1B2C3",
+          "created_at": "2026-05-24T10:00:00Z"
+        }
+      },
+      "responses": {
+        "201": {
+          "status": "created"
+        },
+        "400": {
+          "status": "error",
+          "error": "invalid request body"
+        },
+        "409": {
+          "status": "error",
+          "error": "student with this card_uid already exists"
+        },
+        "500": {
+          "status": "error",
+          "error": "<details>"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/attendance/sessions",
+      "request": {
+        "query": {},
+        "body": {
+          "room": "117",
+          "source": "rfid-gate-1",
+          "data": "2026-05-24",
+          "started_at": "2026-05-24T09:00:00Z",
+          "finished_at": "2026-05-24T10:20:00Z",
+          "scans": [
+            {
+              "card_uid": "A1B2C3",
+              "scanned_at": "2026-05-24T09:15:00Z"
+            }
+          ]
+        }
+      },
+      "responses": {
+        "201": {
+          "status": "created",
+          "data": {
+            "session_id": 123,
+            "saved_events": 1,
+            "not_found_cards": []
+          }
+        },
+        "400": {
+          "status": "error",
+          "error": "invalid request body"
+        },
+        "500": {
+          "status": "error",
+          "error": "<details>"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/schedule",
+      "request": {
+        "query": {},
+        "body": {
+          "name": "14-я неделя",
+          "generated_at": "2026-05-24T08:00:00Z",
+          "course": 3,
+          "semester": 6,
+          "week_number": 14,
+          "date_range": "2026-05-18 - 2026-05-24",
+          "groups": [
+            {
+              "id": "601",
+              "name": "601",
+              "specialty": "Software Engineering",
+              "department": "CS"
+            }
+          ],
+          "lessons": [
+            {
+              "day": "Пн",
+              "day_number": 1,
+              "date": "2026-05-18",
+              "pair": 1,
+              "duration": 2,
+              "time": "09:00 - 10:30",
+              "group": "601",
+              "type": "lecture",
+              "subject": "Базы данных",
+              "teacher": "доц. Яцков Н.Н.",
+              "room": "A-201",
+              "subgroup": null,
+              "frequency": null,
+              "period_start": null,
+              "period_end": null,
+              "comment": null,
+              "cancelled": false,
+              "google_sheet_id": null
+            }
+          ]
+        }
+      },
+      "responses": {
+        "200": {
+          "ok": true,
+          "status": "success",
+          "course": 3,
+          "week_number": 14,
+          "lessons_count": 1,
+          "updated_at": "2026-05-24T08:05:00Z"
+        },
+        "400": {
+          "ok": false,
+          "status": "error",
+          "error": "invalid_payload",
+          "message": "course, week_number and lessons are required"
+        },
+        "500": {
+          "ok": false,
+          "status": "error",
+          "error": "import_failed",
+          "message": "failed to import schedule: <details>"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/schedule",
+      "request": {
+        "query": {
+          "required": {
+            "course": "1..4"
+          },
+          "optional": {
+            "week": "1..14",
+            "group": "substring match",
+            "day": "exact match",
+            "type": "exact match",
+            "teacher": "substring match",
+            "subject": "substring match"
+          }
+        },
+        "body": null
+      },
+      "responses": {
+        "200": {
+          "course": 3,
+          "generated_at": "2026-05-24T08:05:00Z",
+          "groups": [
+            {
+              "id": "601",
+              "name": "601",
+              "count": 25
+            }
+          ],
+          "weeks": [
+            {
+              "name": "14-я неделя",
+              "generated_at": "2026-05-24T08:05:00Z",
+              "course": 3,
+              "semester": 6,
+              "week_number": 14,
+              "date_range": "2026-05-18 - 2026-05-24",
+              "groups": [
+                {
+                  "id": "601",
+                  "name": "601",
+                  "count": 25
+                }
+              ],
+              "lessons": [
+                {
+                  "day": "Пн",
+                  "day_number": 1,
+                  "date": "2026-05-18",
+                  "pair": 1,
+                  "duration": 2,
+                  "time": "09:00 - 10:30",
+                  "group": "601",
+                  "type": "lecture",
+                  "subject": "Базы данных",
+                  "teacher": "доц. Яцков Н.Н.",
+                  "room": "A-201",
+                  "subgroup": null,
+                  "frequency": null,
+                  "period_start": null,
+                  "period_end": null,
+                  "comment": null,
+                  "cancelled": false,
+                  "week_number": 14,
+                  "google_sheet_id": null
+                }
+              ]
+            }
+          ]
+        },
+        "400": {
+          "status": "error",
+          "error": "course must be an integer from 1 to 4"
+        },
+        "500": {
+          "status": "error",
+          "error": "failed to get schedule: <details>"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/plan",
+      "request": {
+        "query": {
+          "required": {
+            "course": "1..4"
+          }
+        },
+        "body": null
+      },
+      "responses": {
+        "200": [
+          {
+            "course": 3,
+            "subject": "Математический анализ",
+            "planned_pairs": 24
+          },
+          {
+            "course": 3,
+            "subject": "Алгебра",
+            "planned_pairs": 18
+          }
+        ],
+        "400": {
+          "status": "error",
+          "error": "course must be an integer from 1 to 4"
+        },
+        "500": {
+          "status": "error",
+          "error": "plan_fetch_failed",
+          "message": "failed to get plan: <details>"
+        }
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/plan",
+      "request": {
+        "query": {},
+        "body": {
+          "course": 3,
+          "subject": "Математический анализ",
+          "planned_pairs": 24
+        }
+      },
+      "responses": {
+        "200": {
+          "status": "success"
+        },
+        "400": {
+          "status": "error",
+          "error": "invalid_payload",
+          "message": "subject is required"
+        },
+        "500": {
+          "status": "error",
+          "error": "plan_upsert_failed",
+          "message": "<details>"
+        }
+      }
+    }
+  ]
+}

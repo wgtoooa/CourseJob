@@ -1,7 +1,9 @@
 package http
 
 import (
-	"CourseJob/internal/service"
+	"CourseJob/internal/service/attendance"
+	authService "CourseJob/internal/service/auth"
+	"CourseJob/internal/service/schedule"
 	"encoding/json"
 	"github.com/jackc/pgx/v5/pgxpool"
 	nethttp "net/http"
@@ -10,15 +12,27 @@ import (
 
 type Handler struct {
 	db                *pgxpool.Pool
-	attendanceService *service.AttendanceService
+	authService       *authService.Service
+	attendanceService *attendance.AttendanceService
+	scheduleService   *schedule.Service
 	ready             *atomic.Bool
+	scheduleEvents    *scheduleSSEBroker
 }
 
-func NewHandler(db *pgxpool.Pool, attendanceService *service.AttendanceService, ready *atomic.Bool) *Handler {
+func NewHandler(
+	db *pgxpool.Pool,
+	authService *authService.Service,
+	attendanceService *attendance.AttendanceService,
+	scheduleService *schedule.Service,
+	ready *atomic.Bool,
+) *Handler {
 	return &Handler{
 		db:                db,
+		authService:       authService,
 		attendanceService: attendanceService,
+		scheduleService:   scheduleService,
 		ready:             ready,
+		scheduleEvents:    newScheduleSSEBroker(),
 	}
 }
 

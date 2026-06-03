@@ -1,0 +1,9 @@
+2026/05/27 23:39:08 config loaded
+2026/05/27 23:39:08 server started on :18083
+2026/05/27 23:39:09 GET /health/live status=200 duration=0s
+2026/05/27 23:39:09 POST /api/v1/attendance/sessions status=401 duration=629µs
+2026/05/27 23:39:09 POST /auth/login status=200 duration=122.8152ms
+2026/05/27 23:39:09 POST /api/v1/attendance/sessions status=403 duration=0s
+2026/05/27 23:39:09 GET /api/v1/student/me/attendance status=200 duration=19.6773ms
+2026/06/01 11:19:32 shutdown signal received
+2026/06/01 11:19:32 server stopped gracefully

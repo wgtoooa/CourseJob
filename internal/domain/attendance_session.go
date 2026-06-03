@@ -8,5 +8,6 @@ type AttendanceSession struct {
 	Source     string
 	StartedAt  time.Time
 	FinishedAt time.Time
+	Data       time.Time
 	CreatedAt  time.Time
 }
